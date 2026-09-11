@@ -2,7 +2,7 @@
 
 Zombie Shooter Map Editor is a Win32/x86 reconstruction of the original ZS1 map editor, prepared for Visual Studio 2022 while preserving the established editor behavior, file formats, rendering paths, scripting, map logic and legacy runtime compatibility.
 
-This branch targets **Zombie Shooter 1**. It is not the Alien Shooter 1 editor branch.
+Tested on Zombie Shooter 1 and Alien Shooter World. May support games that support the “World” layout.
 
 ## Build target
 
