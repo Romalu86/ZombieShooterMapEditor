@@ -631,6 +631,7 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
     DIALOG_BUTTON copyCoordinates(hwnd,0x450);
     DIALOG_BUTTON pasteCoordinates(hwnd,0x44F);
     DIALOG_BUTTON mouseCoordinates(hwnd,0x451);
+    DIALOG_TEXT textLabel(hwnd,0x452);
     DIALOG_COMBO_BOX vids(hwnd,0x421);
 
     if (selectedSprites.No()) {
@@ -687,6 +688,8 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
         zCoord=static_cast<int>(first->Z());
         army=static_cast<unsigned int>(first->Army());
         direction=static_cast<unsigned int>(first->RealDirection());
+        STRING currentTextLabel=first->Name();
+        textLabel=&currentTextLabel;
         ANGLE logical=first->Direction();
         STRING dirText=Printf("Direction=%i",logical.Int());
         directionStatic=&dirText;
@@ -861,6 +864,10 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
             }
         }
     }
+    STRING newTextLabel=textLabel.GetText();
+    STRING firstTextLabel=first->Name();
+    const bool textLabelChanged=newTextLabel.operator!=(&firstTextLabel)!=0;
+
     const int newVid=vids.GetCurrentStringData();
     const bool vidChanged=newVid!=first->Vid()->m_idx;
     bool itemsChanged=false;
@@ -881,6 +888,10 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
 
     for (int i=selectedSprites.No()-1;i>=0;--i) {
         SPRITE* sprite=*selectedSprites[i];
+        if (textLabelChanged) {
+            STRING appliedTextLabel=textLabel.GetText();
+            sprite->SetName(&appliedTextLabel);
+        }
         if (vidChanged)
             sprite->Action(0x3E,newVid,0,0);
         if (stackChanged)
