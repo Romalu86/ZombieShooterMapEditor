@@ -19,6 +19,11 @@ Historical Ogg/Vorbis Win32 static libraries are stored under `third_party/xiph/
 
 The post-link step normalizes PE OS/subsystem compatibility metadata for the legacy Win32 runtime environment.
 
+# Changes in this branch
+
+Limit increased to 8,192 NVid
+Support for Alien Shooter World
+
 ## Runtime data
 
 The executable expects the normal Zombie Shooter editor/game data in its working directory. In particular, the runtime reads the editor/project `.cfg`, `Strings.ini`, game resources and, for terrain import, `mapedit.ini`.
