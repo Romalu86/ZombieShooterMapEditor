@@ -33,6 +33,15 @@ public:
     void LoadWeapon(RESOURCE* res);
     VID* CreateVid(RESOURCE* res,int nvid);
 
+    // Keep the retail ZS1 MAP layout unchanged (4096 in-object slots) and
+    // extend the editor/runtime capacity through side storage.
+    static constexpr int kRetailVidCapacity=MAPEDIT_MAX_VID;
+    static constexpr int kVidCapacity=8192;
+    VID*& VidSlot(int nvid);
+    VID* VidSlot(int nvid) const;
+    void ClearVidSlots();
+    static int EncodeVidQuery(int nvid);
+
     int      m_fps;             // +0x004
     int      m_fpsCnt;          // +0x008
     uint32_t m_flags;           // +0x00C; init-success is bit 2
