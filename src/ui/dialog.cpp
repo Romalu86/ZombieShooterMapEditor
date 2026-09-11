@@ -701,7 +701,7 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
         items.Reset();
         vids.Reset();
         for (int i=0;i<m_noVid;++i) {
-            VID* vid=m_vids[i];
+            VID* vid=VidSlot(i);
             if (!vid)
                 continue;
             if (first->IsSpriteClass(vid->m_spriteClass)) {
@@ -773,7 +773,7 @@ int MAP_EDIT::DialogUnitProperty(HWND__* hwnd,unsigned int msg,unsigned int wPar
         items.Reset();
         SPRITE* first=*selectedSprites.First();
         for (int i=0;i<m_noVid;++i) {
-            VID* vid=m_vids[i];
+            VID* vid=VidSlot(i);
             if (!vid || !vid->IsSpriteType(mask))
                 continue;
             STRING label=vid->GetNumberName();
@@ -1408,10 +1408,10 @@ int __stdcall AppUnusedVid(HWND__* hwnd,unsigned int msg,unsigned int wParam,lon
     if (msg!=0x110u) // WM_INITDIALOG
         return 0;
 
-    STRING files[MAPEDIT_MAX_VID];
+    STRING files[MAP::kVidCapacity];
     int fileCount=0;
-    int fileUsed[MAPEDIT_MAX_VID];
-    int mapUsed[MAPEDIT_MAX_VID];
+    int fileUsed[MAP::kVidCapacity];
+    int mapUsed[MAP::kVidCapacity];
     memset(fileUsed,0,sizeof(fileUsed));
     memset(mapUsed,0,sizeof(mapUsed));
 
@@ -1440,8 +1440,8 @@ int __stdcall AppUnusedVid(HWND__* hwnd,unsigned int msg,unsigned int wParam,lon
             candidate=atoi(base.CharPtr());
 
         VID* direct=EmptyVid;
-        if (candidate>=0 && candidate<Map->m_noVid && Map->m_vids[candidate])
-            direct=Map->m_vids[candidate];
+        if (candidate>=0 && candidate<Map->m_noVid && Map->VidSlot(candidate))
+            direct=Map->VidSlot(candidate);
         if (direct) {
             STRING directName=direct->m_resourceName.After("vid\\");
             if (directName==&files[i]) {
@@ -1450,10 +1450,10 @@ int __stdcall AppUnusedVid(HWND__* hwnd,unsigned int msg,unsigned int wParam,lon
             }
         }
 
-        for (int nvid=0;nvid<MAPEDIT_MAX_VID;++nvid) {
-            if (nvid>=Map->m_noVid || !Map->m_vids[nvid])
+        for (int nvid=0;nvid<MAP::kVidCapacity;++nvid) {
+            if (nvid>=Map->m_noVid || !Map->VidSlot(nvid))
                 continue;
-            STRING resourceName=Map->m_vids[nvid]->m_resourceName.After("vid\\");
+            STRING resourceName=Map->VidSlot(nvid)->m_resourceName.After("vid\\");
             if (resourceName==&files[i]) {
                 fileUsed[i]=1;
                 break;
@@ -1495,7 +1495,7 @@ int __stdcall AppUnusedVid(HWND__* hwnd,unsigned int msg,unsigned int wParam,lon
                         break;
                     int nvid=0;
                     mapRes.Read(&nvid,4u);
-                    if (nvid>=0 && nvid<MAPEDIT_MAX_VID)
+                    if (nvid>=0 && nvid<MAP::kVidCapacity)
                         mapUsed[nvid]=1;
                     mapRes.Shift(20);
                 }
@@ -1505,9 +1505,9 @@ int __stdcall AppUnusedVid(HWND__* hwnd,unsigned int msg,unsigned int wParam,lon
         mapName=FFindNext(&mapSearch,0);
     }
 
-    for (int nvid=0;nvid<MAPEDIT_MAX_VID;++nvid) {
-        if (nvid<Map->m_noVid && Map->m_vids[nvid] && !mapUsed[nvid] &&
-            (Map->m_vids[nvid]->m_unknown0C&7u)!=0) {
+    for (int nvid=0;nvid<MAP::kVidCapacity;++nvid) {
+        if (nvid<Map->m_noVid && Map->VidSlot(nvid) && !mapUsed[nvid] &&
+            (Map->VidSlot(nvid)->m_unknown0C&7u)!=0) {
             STRING number=Int2Str(nvid);
             report+=&number;
             report+=" ";
